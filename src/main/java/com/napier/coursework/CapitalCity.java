@@ -1,17 +1,12 @@
 package com.napier.coursework;
 
-/*
- * Comments are needed.
- *
- */
-
 public class CapitalCity {
 
     private String name;
     private String country;
     private String region;
     private String continent;
-    private long population;
+    private int population;
 
     public String getName() {
         return name;
@@ -45,11 +40,12 @@ public class CapitalCity {
         this.continent = continent;
     }
 
-    public long getPopulation() {
+    public int getPopulation() {
         return population;
     }
 
-    public void setPopulation(long population) {
+    public void setPopulation(int population) {
         this.population = population;
     }
+
 }

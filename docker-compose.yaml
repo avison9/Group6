@@ -1,23 +1,10 @@
+version: '3'
 services:
-  # db is in the db folder
+  # Application Dockerfile is in same folder which is .
   db:
     build: db/.
-    platform: linux/x86_64
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-  # Application Dockerfile is in same folder which is .
+  # db is in the db folder
   app:
     build: .
-    restart: always
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-  # NGINX webserver is in the webserver folder
-  webserver:
-    build: webserver/.
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - app

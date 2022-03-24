@@ -6,88 +6,82 @@ package com.napier.coursework;
  */
 
 import java.sql.*;
-import java.util.Objects;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.*;
-
-@SpringBootApplication
-@RestController
 public class App {
-
-    // Connect to database
-    static MySQLConnection mySQLConnection = new MySQLConnection();
-    static Connection sqlConnect;
 
     public static void main(String[] args) {
 
-        sqlConnect = MySQLConnection.connect();
+        // Connect to database
+        MySQLConnection mySQLConnection = new MySQLConnection();
 
-        SpringApplication.run(App.class, args);
+        Connection connection = mySQLConnection.connect();
 
-        System.out.println("Group6's website is now up and running. Waiting for http request...");
 
-    }
+        // Creating CityReport instance
+        CityReport cityReport = new CityReport();
+        // Display results for all the cities in the world organised by largest population to smallest.
+        cityReport.getWorldCitiesByPopulationDesc(connection);
+        // Display results for all the cities in a continent organised by largest population to smallest.
+        cityReport.getContinentCitiesByPopulationDesc(connection, "Africa");
+        // Display results for all the cities in a region organised by largest population to smallest.
+        cityReport.getRegiondCitiesByPopulationDesc(connection, "Caribbean");
+        //Display results for all the cities in a country organised by largest population to smallest.
+        cityReport.getCountryCitiesByPopulationDesc(connection, "Poland");
+        //Display results for all the cities in a district organised by largest population to smallest.
+        cityReport.getDistirctCitiesByPopulationDesc(connection, "Zachodnio-Pomorskie");
 
-    @RequestMapping(value = "/report",
-            params = { "id", "grouping", "limit" },
-            method = RequestMethod.GET)
-    @ResponseBody
-    public String getReport(@RequestParam(value = "id", defaultValue = "1") int ID, @RequestParam(value = "grouping", defaultValue = "") String grouping,
-                            @RequestParam(value = "limit", defaultValue = "1") String limit) throws ClassNotFoundException, SQLException {
 
-        System.out.println(ID + grouping + limit);
 
-        // Create variable for the html report output
-        String htmlOutput = "";
+        CapitalCityReport capitalCityReport = new CapitalCityReport();
+        // Display results for all the capital cities in the world organised by largest population to smallest.
+        capitalCityReport.getAllCapitalCityPopulation(connection);
+        // Display results for all the capital cities in a continent organised by largest population to smallest.
+        capitalCityReport.getCapitalCityPopulationByContinent(connection);
+        // Display results for all the capital cities in a region organised by largest population to smallest.
+        capitalCityReport.getCapitalCityPopulationByRegion(connection);
+        // Display results for the top N populated capital cities in the world where N is provided by the user.
+        capitalCityReport.getTopNCapitalCities(connection, 10);
+        // Display results for the top N populated capital cities in a continent where N is provided by the user.
+        capitalCityReport.getTopNCapitalCitiesInOneContinent(connection, 10, "Asia");
+        // Display results for the top N populated capital cities in a region where N is provided by the user.
+        capitalCityReport.getTopNCapitalCitiesInOneRegion(connection, 10, "Western Europe");
+        // Display results for the top N populated capital cities in all continents where N is provided by the user.
+        capitalCityReport.getTopNCapitalCitiesInAllContinents(connection, 10);
+        // Display results for the top N populated capital cities in all global regions where N is provided by the user.
+        capitalCityReport.getTopNCapitalCitiesInAllRegions(connection, 10);
 
-        System.out.println("ID is = "+ ID);
-        System.out.println("grouping is = "+ grouping);
-        System.out.println("limit is = "+ limit);
 
-        try {
+        // Start of Country Series of Reports -->
+        // Create new Country Report (from class)
+        CountryReport countryReport = new CountryReport();
 
-            // We create our handy report generator
-            ReportEngine theReport = new ReportEngine();
+        //For now, we will use static references for N until interface is developed
+        //This will cycle through Report IDs 1 to 6
 
-            // In this mode, we expect variables to be passed - we can also create a loop here to cycle from Reports 1 to 32
-            htmlOutput = theReport.generateReport(ID,grouping,limit,sqlConnect);
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Failed to produce report");
-
+        for (int x = 1; x < 7; x++) {
+            // Call on getReport method to create individual report
+            countryReport.getReport(x, connection);
         }
+        // End of Country Series of Reports -->
 
-        /*
-         Produce HTML output in console - should be removed when testing complete
-         System.out.println("--- HTML START ---");
-         System.out.println(htmlOutput);
-         System.out.println("--- HTML END ---");
-        */
 
-        return htmlOutput;
-    }
+        LanguagesReport languagesReport = new LanguagesReport();
+        // Display results
+        languagesReport.getWorldLanguagesByPopulationDesc(connection);
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String produceQueryHome()  throws ClassNotFoundException, SQLException {
 
-        // Create variable for the html output
-        String htmlOutput;
+        PopulationReport populationReport = new PopulationReport();
 
-        htmlOutput = """
-                <html>
-                add home page and form to GET variables here
-                <a href="/report?id=5&grouping=North America&limit=10">Test Test Test</a>
-                </html>
-                """;
 
-        return htmlOutput;
+        populationReport.getPopulationPerContinent(connection);
+        populationReport.getPopulationPerRegion(connection);
+        populationReport.getPopulationPerCountry(connection);
+        populationReport.getPopulationOfWorld(connection);
+        populationReport.getPopulationOfContinent(connection, "Asia");
+        populationReport.getPopulationOfRegion(connection, "Baltic Countries");
 
-    }
 
-    public static void test() {
-        System.out.println("Test in app class executed.");
+//         Disconnect from database
+        mySQLConnection.disconnect(connection);
     }
 }

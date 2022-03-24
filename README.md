@@ -24,7 +24,7 @@ This repository is maintained and contributed by the following Group 6 members:
 ## Requirements Met
 
 7 requirements of 32 have been implemented, which is 22%.
-=======
+
 | ID    | Name | Met  | Screenshot |
 |-------|------|------|------------|
 | 1 |  All the countries in the world organised by largest population to smallest. | YES | ![](https://github.com/xx00a/Group6/blob/master/screenshots/ReportID_1.png?raw=true) |
